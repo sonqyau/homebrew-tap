@@ -1,5 +1,6 @@
 cask "quickrecorder" do
   name "QuickRecorder"
+
   version "1.6.7"
   sha256 "c2bd457ca9e5335852e5ac1f08d0c30f29a606167952e8d263be1c170c2f6da0"
 

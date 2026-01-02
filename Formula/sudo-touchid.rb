@@ -1,5 +1,5 @@
 class SudoTouchid < Formula
-  desc "artginzburg/sudo-touchid"
+  desc "SudoTouchid: artginzburg/sudo-touchid"
   homepage "https://github.com/artginzburg/sudo-touchid"
   url "https://github.com/artginzburg/sudo-touchid/releases/download/0.5/sudo-touchid.sh"
   sha256 "838fd7f51204885430ec05849962cfb3be32e6436b73f32cc53db80aa29123df"

@@ -1,5 +1,5 @@
 class MacosDefaults < Formula
-  desc "dsully/macos-defaults"
+  desc "MacosDefaults: dsully/macos-defaults"
   homepage "https://github.com/dsully/macos-defaults"
   url "https://github.com/dsully/macos-defaults/releases/download/0.3.0/macos-defaults-aarch64-apple-darwin.tar.xz"
   sha256 "9ab07bc12726db44409120f60a06e765899a7345a7d6d7b51a73f6cd2f399086"
