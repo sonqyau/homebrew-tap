@@ -1,4 +1,5 @@
 class Deeplx < Formula
+  desc "OwO-Network/DeepLX"
   homepage "https://github.com/OwO-Network/DeepLX"
   version "1.1.0"
   license "MIT"

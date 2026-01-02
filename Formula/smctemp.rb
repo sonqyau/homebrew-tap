@@ -1,4 +1,5 @@
 class Smctemp < Formula
+  desc "narugit/smctemp"
   homepage "https://github.com/narugit/smctemp"
   url "https://github.com/narugit/smctemp/archive/refs/tags/0.6.0.tar.gz"
   version "0.5"
