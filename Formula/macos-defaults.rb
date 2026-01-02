@@ -1,12 +1,10 @@
 class MacosDefaults < Formula
-  desc "Defaults setting for macOS"
   homepage "https://github.com/dsully/macos-defaults"
+  url "https://github.com/dsully/macos-defaults/releases/download/0.3.0/macos-defaults-aarch64-apple-darwin.tar.xz"
   version "0.3.0"
-  if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/dsully/macos-defaults/releases/download/0.3.0/macos-defaults-aarch64-apple-darwin.tar.xz"
-    sha256 "9ab07bc12726db44409120f60a06e765899a7345a7d6d7b51a73f6cd2f399086"
-  end
+  sha256 "9ab07bc12726db44409120f60a06e765899a7345a7d6d7b51a73f6cd2f399086"
   license "MIT"
+  head "https://github.com/dsully/macos-defaults.git", branch: "main"
 
   BINARY_ALIASES = {
     "aarch64-apple-darwin": {},
@@ -22,7 +20,7 @@ class MacosDefaults < Formula
   def install_binary_aliases!
     BINARY_ALIASES[target_triple.to_sym].each do |source, dests|
       dests.each do |dest|
-        bin.install_symlink bin/source.to_s => dest
+        bin.install_symlink bin / source.to_s => dest
       end
     end
   end
