@@ -228,15 +228,18 @@ jobs:
               IFS='|' read -r repo_path commit_sha type name <<< "$(cat "$update_file")"
               branch_name="update-${name}-$(date +%s)"
               git checkout -b "$branch_name"
-              git add .
+              
               if [[ "$type" == "casks" ]]; then
+                git add "Casks/${name}.rb"
                 commit_msg="deps(casks): ${repo_path} ${commit_sha}"
               else
+                git add "Formula/${name}.rb"
                 commit_msg="deps(formula): ${repo_path} ${commit_sha}"
               fi
+              
               git commit -m "$commit_msg"
               git push origin "$branch_name"
-              pr_body="Updated ${name} to ${commit_sha}."
+              pr_body="Updated ${repo_path} to ${commit_sha}."
               auth_token="${PAT_TOKEN:-$GITHUB_TOKEN}"
               curl -X POST \
                 -H "Authorization: token $auth_token" \
@@ -246,8 +249,7 @@ jobs:
                   \"title\": \"$commit_msg\",
                   \"body\": \"$pr_body\",
                   \"head\": \"$branch_name\",
-                  \"base\": \"main\",
-                  \"draft\": true
+                  \"base\": \"main\"
                 }"
               git checkout main
               rm -f "$update_file"
