@@ -27,7 +27,7 @@ jobs:
           key: ${{runner.os}}-rubygems-${{steps.set-up-homebrew.outputs.gems-hash}}
           restore-keys: ${{runner.os}}-rubygems-
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{secrets.GITHUB_TOKEN}}
       - name: Create script
