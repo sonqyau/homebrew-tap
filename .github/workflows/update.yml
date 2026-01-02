@@ -17,6 +17,7 @@ jobs:
       contents: write
       pull-requests: write
       actions: read
+      checks: write
     steps:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
@@ -84,11 +85,14 @@ jobs:
               def calculate_sha256(url)
                 return nil unless url
                 temp_file = "/tmp/brew-#{Process.pid}-#{Time.now.to_f}"
-                system("curl", "-fsSL", "--max-time", "10", "-o", temp_file, url, out: File::NULL, err: File::NULL)
-                return nil unless $?.success?
-                sha256 = Digest::SHA256.file(temp_file).hexdigest
-                File.delete(temp_file) rescue nil
-                sha256
+                begin
+                  result = system("curl", "-fsSL", "--max-time", "10", "-o", temp_file, url, out: File::NULL, err: File::NULL)
+                  return nil unless result
+                  sha256 = Digest::SHA256.file(temp_file).hexdigest
+                  sha256
+                ensure
+                  File.delete(temp_file) if File.exist?(temp_file)
+                end
               rescue => e
                 warn "SHA256 calculation failed: #{e.message}"
                 nil
@@ -125,7 +129,7 @@ jobs:
                 new_sha256 = find_asset_digest(release_data, url_pattern, latest_version) || calculate_sha256(new_url)
                 return false unless new_sha256
                 return false unless update_file(file_path, latest_version, new_sha256)
-                commit_sha = api_request("/repos/#{repo_path}/commits/#{release_data['tag_name']}")&.dig('sha')&.[](0, 7) || 'unknown'
+                commit_sha = api_request("/repos/#{repo_path}/commits/#{release_data['tag_name']}")&.dig('sha')&.to_s&.[](0, 7) || 'unknown'
                 File.write(".update_#{cask_name}", "#{repo_path}|#{commit_sha}|casks|#{cask_name}")
                 true
               rescue => e
@@ -155,7 +159,7 @@ jobs:
                 end
                 return false unless new_sha256
                 return false unless update_file(file_path, latest_version, new_sha256)
-                commit_sha = api_request("/repos/#{repo_path}/commits/#{release_data['tag_name']}")&.dig('sha')&.[](0, 7) || 'unknown'
+                commit_sha = api_request("/repos/#{repo_path}/commits/#{release_data['tag_name']}")&.dig('sha')&.to_s&.[](0, 7) || 'unknown'
                 File.write(".update_#{formula_name}", "#{repo_path}|#{commit_sha}|formula|#{formula_name}")
                 true
               rescue => e
@@ -210,7 +214,7 @@ jobs:
           for update_file in .update_*; do
             if [[ -f "$update_file" ]]; then
               IFS='|' read -r repo_path commit_sha type name <<< "$(cat "$update_file")"
-              branch_name="update-#{name}-$(date +%s)"
+              branch_name="update-${name}-$(date +%s)"
               git checkout -b "$branch_name"
               git add .
               if [[ "$type" == "casks" ]]; then
@@ -229,6 +233,6 @@ jobs:
                 --label "dependencies" \
                 --draft || true
               git checkout main
-              rm "$update_file"
+              rm -f "$update_file"
             fi
           done
