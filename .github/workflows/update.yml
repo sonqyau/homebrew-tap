@@ -11,6 +11,8 @@ on:
 jobs:
   update:
     runs-on: macos-26
+    env:
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     permissions:
       contents: write
       pull-requests: write
@@ -18,12 +20,8 @@ jobs:
     steps:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
-        with:
-          token: ${{secrets.GITHUB_TOKEN}}
       - name: Checkout repo
         uses: actions/checkout@v6
-        with:
-          token: ${{secrets.GITHUB_TOKEN}}
       - name: Create script
         run: |
           cat > update.rb << 'EOF'
@@ -202,7 +200,6 @@ jobs:
       - name: Run script
         run: |
           export TARGET="${{ github.event.inputs.target || '' }}"
-          export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
           chmod +x update.rb
           ./update.rb
       - name: Create PRs
